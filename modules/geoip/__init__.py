@@ -17,9 +17,8 @@ import seash_global_variables
 import seash_exceptions
 from repyportability import add_dy_support
 add_dy_support(locals())
-dy_import_module_symbols("geoip_client.r2py")
+geoip_client = dy_import_module("geoip_client.r2py")
 
-dy_import_module_symbols("geoip_client.r2py")
 
 
 
@@ -29,7 +28,7 @@ def show_location(input_dict, environment_dict):
   if not environment_dict['currenttarget']:
     raise seash_exceptions.UserError("Error, command requires a target")
 
-  geoip_init_client()
+  geoip_client.geoip_init_client()
 
   # we should only visit a node once...
   printedIPlist = []
@@ -46,16 +45,19 @@ def show_location(input_dict, environment_dict):
         # will be a hostname if it is a NAT node and we're using
         # Affixes.
         node_ip = gethostbyname(thisnodeIP)
-        location_dict = geoip_record_by_addr(node_ip)
+        location_dict = geoip_client.geoip_record_by_addr(node_ip)
       # Name resolution and geoip lookups could fail, in which case
       # we just don't know where the node is.
       except:
         location_dict = None
 
       if location_dict:
-        print str(seash_global_variables.vesselinfo[longname]['ID'])+'('+str(thisnodeIP)+'): '+geoip_location_str(location_dict)
+        print str(seash_global_variables.vesselinfo[longname]['ID']) + \
+            '(' + str(thisnodeIP) + '): ' + \
+            geoip_client.geoip_location_str(location_dict)
       else:
-        print str(seash_global_variables.vesselinfo[longname]['ID'])+'('+str(thisnodeIP)+'): Location unknown'
+        print str(seash_global_variables.vesselinfo[longname]['ID']) + \
+            '(' + str(thisnodeIP) + '): Location unknown'
 
 
 #show coordinates -- Display the latitude & longitude of the nodes
@@ -64,7 +66,7 @@ def show_coordinates(input_dict, environment_dict):
   if not environment_dict['currenttarget']:
     raise seash_exceptions.UserError("Error, command requires a target")
 
-  geoip_init_client()
+  geoip_client.geoip_init_client()
 
   # we should only visit a node once...
   printedIPlist = []
@@ -81,17 +83,20 @@ def show_coordinates(input_dict, environment_dict):
         # will be a hostname if it is a NAT node and we're using
         # Affixes.
         node_ip = gethostbyname(thisnodeIP)
-        location_dict = geoip_record_by_addr(node_ip)
+        location_dict = geoip_client.geoip_record_by_addr(node_ip)
       # Name resolution and geoip lookups could fail, in which case
       # we just don't know where the node is.
       except:
         location_dict = None
 
       if location_dict:
-        print str(seash_global_variables.vesselinfo[longname]['ID'])+'('+str(thisnodeIP)+'): ' + str(location_dict['latitude']) + ", " + str(location_dict['longitude'])
+        print str(seash_global_variables.vesselinfo[longname]['ID']) + \
+            '(' + str(thisnodeIP) + '): ' + str(location_dict['latitude']) + \
+            ", " + str(location_dict['longitude'])
 
       else:
-        print str(seash_global_variables.vesselinfo[longname]['ID'])+'('+str(thisnodeIP)+'): Location unknown'
+        print str(seash_global_variables.vesselinfo[longname]['ID']) + \
+            '(' + str(thisnodeIP) + '): Location unknown'
 
 
 SHOW_LOCATION_HELPTEXT = """
@@ -131,21 +136,24 @@ exampleuser@browsegood !> show coordinates
 """
 
 command_dict = {
-  'show':{
+  'show': {
     'children': {
-      'location':{
-      'name':'location',
-      'callback': show_location,
-      'summary': "Display location information (countries) for the nodes",
-      'help_text':SHOW_LOCATION_HELPTEXT,
-      'children': {}},
-    'coordinates':{
-      'name':'coordinates',
-      'callback': show_coordinates,
-      'summary':'Display the latitude & longitude of the node',
-      'help_text':SHOW_COORDINATES_HELPTEXT,
-      'children': {}}
-    }}
+      'location': {
+        'name': 'location',
+        'callback': show_location,
+        'summary': "Display location information (countries) for the nodes",
+        'help_text': SHOW_LOCATION_HELPTEXT,
+        'children': {}
+      },
+      'coordinates': {
+        'name': 'coordinates',
+        'callback': show_coordinates,
+        'summary': 'Display the latitude & longitude of the node',
+        'help_text': SHOW_COORDINATES_HELPTEXT,
+        'children': {}
+      }
+    }
+  }
 }
 
 
