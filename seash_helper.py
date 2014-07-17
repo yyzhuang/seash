@@ -29,9 +29,7 @@ affix_obj = affix_stack.AffixStack('(CoordinationAffix)(NamingAndResolverAffix)'
 print affix_obj.get_advertisement_string()
 
 # Override openconnection so that nmclient will use Affixes
-print repr(openconnection)
 openconnection = affix_obj.openconnection
-print repr(openconnection)
 
 
 time = dy_import_module("time.r2py")
@@ -40,9 +38,6 @@ listops = dy_import_module("listops.r2py")
 parallelize = dy_import_module("parallelize.r2py")
 domainnameinfo = dy_import_module("domainnameinfo.r2py")
 
-# For lookups from Seattle's advertise services
-# XXX Unused!
-#advertise = dy_import_module("advertise.r2py")
 
 # Finds IP-location mappings for `show location`
 geoip_client = dy_import_module("geoip_client.r2py")
@@ -50,19 +45,8 @@ geoip_client = dy_import_module("geoip_client.r2py")
 # For loadstate and savestate
 serialize = dy_import_module("serialize.r2py")
 
-print repr(openconnection)
 nmclient = dy_import_module("nmclient.r2py")
-print repr(openconnection)
 
-"""
-# These are required as importing repyportability and add_dy_support
-# in command_callbacks.py would override our overrides of openconnection...
-nmclient_createhandle = nmclient.nmclient_createhandle
-nmclient_listaccessiblevessels = nmclient.nmclient_listaccessiblevessels
-nmclient_duplicatehandle = nmclient.nmclient_duplicatehandle
-nmclient_get_handle_info = nmclient.nmclient_get_handle_info
-nmclient_set_handle_info = nmclient.nmclient_set_handle_info
-"""
 
 
 def update_time():
