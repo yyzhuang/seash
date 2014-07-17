@@ -63,37 +63,20 @@ import seash_modules
 import os.path
 import sys
 
-from repyportability import *
-add_dy_support(locals())
+# XXX Importing repyportability and dy_import_module's more than 
+# XXX once in an import chain overwrites the Repy API calls and 
+# XXX disables any overrides (e.g. Affix's). We thus use 
+# XXX seash_helper's copy of dylink to pull in the stuff we need.
 
-# dy_import_module_symbols("nmclient.r2py")
+time = seash_helper.dy_import_module("time.r2py")
+rsa = seash_helper.dy_import_module("rsa.r2py")
+listops = seash_helper.dy_import_module("listops.r2py")
 
-# This is a temporary workaround for the problem where nmclient is being
-# initialized multiple times by dylink.r2py when it is imported multiple
-# times.  The handles returned by the nmclient imported here will be
-# completely different from the set of handles that the nmclient
-# imported in seash_helper knows about.  This needs to be removed once
-# dylink is properly fixed. See #1319 for more information.
+# For lookups from Seattle's advertise services
+advertise = seash_helper.dy_import_module("advertise.r2py")
 
-nmclient_createhandle = seash_helper.nmclient_createhandle
-nmclient_listaccessiblevessels = seash_helper.nmclient_listaccessiblevessels
-nmclient_duplicatehandle = seash_helper.nmclient_duplicatehandle
-nmclient_get_handle_info = seash_helper.nmclient_get_handle_info
-nmclient_set_handle_info = seash_helper.nmclient_set_handle_info
-
-dy_import_module_symbols("time.r2py")
-
-dy_import_module_symbols("rsa.r2py")
-
-dy_import_module_symbols("listops.r2py")
-
-dy_import_module_symbols("parallelize.r2py")
-
-dy_import_module_symbols("domainnameinfo.r2py")
-
-dy_import_module_symbols("advertise.r2py")   #  used to do OpenDHT lookups
-
-dy_import_module_symbols("serialize.r2py") # used for loadstate and savestate
+# For `loadstate` and `savestate`
+serialize = seash_helper.dy_import_module("serialize.r2py")  
 
 # The versions of Seattle that we officially support.
 SUPPORTED_PROG_PLATFORMS = ["repyV1", "repyV2"]
@@ -268,7 +251,7 @@ def show_users(input_dict, environment_dict):
             break
 
         else:
-          print seash_helper.fit_string(rsa_publickey_to_string(key),15),
+          print seash_helper.fit_string(rsa.rsa_publickey_to_string(key), 15),
 
       print
 
@@ -338,7 +321,7 @@ def show_owner(input_dict, environment_dict):
           break
 
       else:
-        print longname, seash_helper.fit_string(rsa_publickey_to_string(ownerkey),15)
+        print longname, seash_helper.fit_string(rsa.rsa_publickey_to_string(ownerkey), 15)
 
     else:
       print longname, "has no information (try 'update' or 'list')"
@@ -526,7 +509,7 @@ def show_offcut(input_dict, environment_dict):
 
 
   # we should only visit a node once...
-  nodelist = listops_uniq(seash_helper.longnamelist_to_nodelist(seash_global_variables.targets[environment_dict['currenttarget']]))
+  nodelist = listops.listops_uniq(seash_helper.longnamelist_to_nodelist(seash_global_variables.targets[environment_dict['currenttarget']]))
   retdict = seash_helper.contact_targets(nodelist, seash_helper.showoffcut_target)
 
   for nodename in retdict:
@@ -670,7 +653,7 @@ def add_target(input_dict, environment_dict):
     raise seash_exceptions.UserError("Can't modify the contents of '"+dest+"'")
 
   # source - dest has what we should add (items in source but not dest)
-  addlist = listops_difference(seash_global_variables.targets[source],seash_global_variables.targets[dest])
+  addlist = listops.listops_difference(seash_global_variables.targets[source],seash_global_variables.targets[dest])
 
   if len(addlist) == 0:
     raise seash_exceptions.UserError("No targets to add (the target is already in '"+dest+"')")
@@ -716,7 +699,7 @@ def add_target_to_group(input_dict, environment_dict):
     raise seash_exceptions.UserError("Can't modify the contents of '"+dest+"'")
 
   # source - dest has what we should add (items in source but not dest)
-  addlist = listops_difference(seash_global_variables.targets[source],seash_global_variables.targets[dest])
+  addlist = listops.listops_difference(seash_global_variables.targets[source],seash_global_variables.targets[dest])
 
   if len(addlist) == 0:
     raise seash_exceptions.UserError("No targets to add (the target is already in '"+dest+"')")
@@ -756,7 +739,7 @@ def add_to_group(input_dict, environment_dict):
     raise seash_exceptions.UserError("Can't modify the contents of '"+dest+"'")
 
   # source - dest has what we should add (items in source but not dest)
-  addlist = listops_difference(seash_global_variables.targets[source],seash_global_variables.targets[dest])
+  addlist = listops.listops_difference(seash_global_variables.targets[source],seash_global_variables.targets[dest])
 
   if len(addlist) == 0:
     raise seash_exceptions.UserError("No targets to add (the target is already in '"+dest+"')")
@@ -794,7 +777,7 @@ def remove_target(input_dict, environment_dict):
     raise seash_exceptions.UserError("Can't modify the contents of '"+dest+"'")
 
   # find the items to remove (the items in both dest and source)
-  removelist = listops_intersect(seash_global_variables.targets[dest],seash_global_variables.targets[source])
+  removelist = listops.listops_intersect(seash_global_variables.targets[dest],seash_global_variables.targets[source])
 
   if len(removelist) == 0:
     raise seash_exceptions.UserError("No targets to remove (no items from '"+source+"' are in '"+dest+"')")
@@ -837,7 +820,7 @@ def remove_target_from_group(input_dict, environment_dict):
     raise seash_exceptions.UserError("Can't modify the contents of '"+dest+"'")
 
   # find the items to remove (the items in both dest and source)
-  removelist = listops_intersect(seash_global_variables.targets[dest],seash_global_variables.targets[source])
+  removelist = listops.listops_intersect(seash_global_variables.targets[dest],seash_global_variables.targets[source])
 
   if len(removelist) == 0:
     raise seash_exceptions.UserError("No targets to remove (no items from '"+source+"' are in '"+dest+"')")
@@ -875,7 +858,7 @@ def remove_from_group(input_dict, environment_dict):
     raise seash_exceptions.UserError("Can't modify the contents of '"+dest+"'")
 
   # find the items to remove (the items in both dest and source)
-  removelist = listops_intersect(seash_global_variables.targets[dest],seash_global_variables.targets[source])
+  removelist = listops.listops_intersect(seash_global_variables.targets[dest],seash_global_variables.targets[source])
 
   if len(removelist) == 0:
     raise seash_exceptions.UserError("No targets to remove (no items from '"+source+"' are in '"+dest+"')")
@@ -925,11 +908,11 @@ def move_target_to_group(input_dict, environment_dict):
   if seash_helper.is_immutable_targetname(dest):
     raise seash_exceptions.UserError( "Can't modify the contents of '"+dest+"'")
 
-  removelist = listops_intersect(seash_global_variables.targets[source], seash_global_variables.targets[moving])
+  removelist = listops.listops_intersect(seash_global_variables.targets[source], seash_global_variables.targets[moving])
   if len(removelist) == 0:
     raise seash_exceptions.UserError("Error, '"+moving+"' is not in '"+source+"'")
 
-  addlist = listops_difference(removelist, seash_global_variables.targets[dest])
+  addlist = listops.listops_difference(removelist, seash_global_variables.targets[dest])
   if len(addlist) == 0:
     raise seash_exceptions.UserError("Error, the common items between '"+source+"' and '"+moving+"' are already in '"+dest+"'")
 
@@ -1046,8 +1029,8 @@ def browse(input_dict, environment_dict):
 
 
   try:
-    nodelist = advertise_lookup(seash_global_variables.keys[environment_dict['currentkeyname']]['publickey'], graceperiod = 3)
-  except (AdvertiseError, TimeoutError), e:
+    nodelist = advertise.advertise_lookup(seash_global_variables.keys[environment_dict['currentkeyname']]['publickey'], graceperiod = 3)
+  except (advertise.AdvertiseError, TimeoutError), e:
     # print the error and return to the user.   Let them decide what to do.
     print "Error:",e
     print "Retry or check network connection."
@@ -1112,8 +1095,8 @@ def browse_arg(input_dict, environment_dict):
 
   try:
     # they are trying to only do some types of lookup...
-    nodelist = advertise_lookup(seash_global_variables.keys[environment_dict['currentkeyname']]['publickey'],lookuptype=type_list)
-  except (AdvertiseError, TimeoutError), e:
+    nodelist = advertise.advertise_lookup(seash_global_variables.keys[environment_dict['currentkeyname']]['publickey'],lookuptype=type_list)
+  except (advertise.AdvertiseError, TimeoutError), e:
     # print the error and return to the user.   Let them decide what to do.
     print "Error:",e
     print "Retry or check network connection."
@@ -1181,11 +1164,12 @@ def genkeys_filename(input_dict, environment_dict):
   seash_helper.remove_files([pubkeyfn, privkeyfn])
 
   # do the actual generation (will take a while)
-  newkeys = rsa_gen_pubpriv_keys(keylength)
+  newkeys = rsa.rsa_gen_pubpriv_keys(keylength)
 
-  rsa_privatekey_to_file(newkeys[1],privkeyfn)
-  rsa_publickey_to_file(newkeys[0],pubkeyfn)
-  seash_global_variables.keys[keyname] = {'publickey':newkeys[0], 'privatekey':newkeys[1]}
+  rsa.rsa_privatekey_to_file(newkeys[1], privkeyfn)
+  rsa.rsa_publickey_to_file(newkeys[0], pubkeyfn)
+  seash_global_variables.keys[keyname] = {'publickey': newkeys[0], 
+      'privatekey': newkeys[1]}
 
   print "Created identity '"+keyname+"'"
 
@@ -1205,8 +1189,8 @@ def genkeys_filename_len(input_dict, environment_dict):
   # expand '~'
   fileandpath = os.path.expanduser(command_key)
   keyname = os.path.basename(fileandpath)
-  pubkeyfn = fileandpath+'.publickey'
-  privkeyfn = fileandpath+'.privatekey'
+  pubkeyfn = fileandpath + '.publickey'
+  privkeyfn = fileandpath + '.privatekey'
 
 
   # Iterates through the dictionary to retrieve the user's length argument
@@ -1218,7 +1202,7 @@ def genkeys_filename_len(input_dict, environment_dict):
 
 
   # do the actual generation (will take a while)
-  newkeys = rsa_gen_pubpriv_keys(keylength)
+  newkeys = rsa.rsa_gen_pubpriv_keys(keylength)
 
   # RepyV2's API does not allow us to truncate a file in-place.
   # Therefore, we need to make sure we're creating a new file, otherwise
@@ -1227,9 +1211,10 @@ def genkeys_filename_len(input_dict, environment_dict):
 
   seash_helper.remove_files([pubkeyfn, privkeyfn])
 
-  rsa_privatekey_to_file(newkeys[1],privkeyfn)
-  rsa_publickey_to_file(newkeys[0],pubkeyfn)
-  seash_global_variables.keys[keyname] = {'publickey':newkeys[0], 'privatekey':newkeys[1]}
+  rsa.rsa_privatekey_to_file(newkeys[1], privkeyfn)
+  rsa.rsa_publickey_to_file(newkeys[0], pubkeyfn)
+  seash_global_variables.keys[keyname] = {'publickey': newkeys[0], 
+      'privatekey': newkeys[1]}
 
   print "Created identity '"+keyname+"'"
 
@@ -1246,8 +1231,8 @@ def genkeys_filename_len_as_identity(input_dict, environment_dict):
     input_dict = input_dict[command_key]['children']
     command_key = input_dict.keys()[0]
 
-  pubkeyfn = command_key+'.publickey'
-  privkeyfn = command_key+'.privatekey'
+  pubkeyfn = command_key + '.publickey'
+  privkeyfn = command_key + '.privatekey'
 
 
   # Iterates through the dictionary to retrieve the user's length argument
@@ -1267,7 +1252,7 @@ def genkeys_filename_len_as_identity(input_dict, environment_dict):
 
 
   # do the actual generation (will take a while)
-  newkeys = rsa_gen_pubpriv_keys(keylength)
+  newkeys = rsa.rsa_gen_pubpriv_keys(keylength)
 
   # RepyV2's API does not allow us to truncate a file in-place.
   # Therefore, we need to make sure we're creating a new file, otherwise
@@ -1276,11 +1261,12 @@ def genkeys_filename_len_as_identity(input_dict, environment_dict):
 
   seash_helper.remove_files([pubkeyfn, privkeyfn])
 
-  rsa_privatekey_to_file(newkeys[1],privkeyfn)
-  rsa_publickey_to_file(newkeys[0],pubkeyfn)
-  seash_global_variables.keys[keyname] = {'publickey':newkeys[0], 'privatekey':newkeys[1]}
+  rsa.rsa_privatekey_to_file(newkeys[1], privkeyfn)
+  rsa.rsa_publickey_to_file(newkeys[0], pubkeyfn)
+  seash_global_variables.keys[keyname] = {'publickey': newkeys[0], 
+      'privatekey': newkeys[1]}
 
-  print "Created identity '"+keyname+"'"
+  print "Created identity '" + keyname + "'"
 
 
 
@@ -1308,7 +1294,7 @@ def genkeys_filename_as_identity(input_dict, environment_dict):
   keyname = command_key
 
   # do the actual generation (will take a while)
-  newkeys = rsa_gen_pubpriv_keys(keylength)
+  newkeys = rsa.rsa_gen_pubpriv_keys(keylength)
 
   # RepyV2's API does not allow us to truncate a file in-place.
   # Therefore, we need to make sure we're creating a new file, otherwise
@@ -1317,8 +1303,8 @@ def genkeys_filename_as_identity(input_dict, environment_dict):
 
   seash_helper.remove_files([pubkeyfn, privkeyfn])
 
-  rsa_privatekey_to_file(newkeys[1],privkeyfn)
-  rsa_publickey_to_file(newkeys[0],pubkeyfn)
+  rsa.rsa_privatekey_to_file(newkeys[1], privkeyfn)
+  rsa.rsa_publickey_to_file(newkeys[0], pubkeyfn)
   seash_global_variables.keys[keyname] = {'publickey':newkeys[0], 'privatekey':newkeys[1]}
 
   print "Created identity '"+keyname+"'"
@@ -1352,10 +1338,11 @@ def loadpub_filename(input_dict, environment_dict):
     pubkeyfn = fileandpath+'.publickey'
 
   # load the key and update the table...
-  pubkey = rsa_file_to_publickey(pubkeyfn)
+  pubkey = rsa.rsa_file_to_publickey(pubkeyfn)
 
   if keyname not in seash_global_variables.keys:
-    seash_global_variables.keys[keyname] = {'publickey':pubkey, 'privatekey':None}
+    seash_global_variables.keys[keyname] = {'publickey': pubkey, 
+        'privatekey':None}
   else:
     seash_global_variables.keys[keyname]['publickey'] = pubkey
 
@@ -1400,7 +1387,7 @@ def loadpub_filename_as(input_dict, environment_dict):
   keyname = command_key
 
   # load the key and update the table...
-  pubkey = rsa_file_to_publickey(pubkeyfn)
+  pubkey = rsa.rsa_file_to_publickey(pubkeyfn)
   if keyname not in seash_global_variables.keys:
     seash_global_variables.keys[keyname] = {'publickey':pubkey, 'privatekey':None}
   else:
@@ -1431,20 +1418,21 @@ def loadpriv_filename(input_dict, environment_dict):
   if command_key.endswith('.privatekey'):
     # handle '~'
     fileandpath = os.path.expanduser(command_key)
-    privkeyfn = fileandpath+'.privatekey'
+    privkeyfn = fileandpath + '.privatekey'
     keyname = os.path.basename(fileandpath[:len('.privatekey')])
   else:
     # they typed 'loadpriv foo'
     # handle '~'
     fileandpath = os.path.expanduser(command_key)
-    privkeyfn = fileandpath+'.privatekey'
+    privkeyfn = fileandpath + '.privatekey'
     keyname = os.path.basename(fileandpath)
 
 
   # load the key and update the table...
-  privkey = rsa_file_to_privatekey(privkeyfn)
+  privkey = rsa.rsa_file_to_privatekey(privkeyfn)
   if keyname not in seash_global_variables.keys:
-    seash_global_variables.keys[keyname] = {'privatekey':privkey, 'publickey':None}
+    seash_global_variables.keys[keyname] = {'privatekey': privkey, 
+        'publickey': None}
   else:
     seash_global_variables.keys[keyname]['privatekey'] = privkey
 
@@ -1489,9 +1477,10 @@ def loadpriv_filename_as(input_dict, environment_dict):
 
 
   # load the key and update the table...
-  privkey = rsa_file_to_privatekey(privkeyfn)
+  privkey = rsa.rsa_file_to_privatekey(privkeyfn)
   if keyname not in seash_global_variables.keys:
-    seash_global_variables.keys[keyname] = {'privatekey':privkey, 'publickey':None}
+    seash_global_variables.keys[keyname] = {'privatekey': privkey, 
+        'publickey': None}
   else:
     seash_global_variables.keys[keyname]['privatekey'] = privkey
 
@@ -1516,31 +1505,35 @@ def loadkeys_keyname(input_dict, environment_dict):
      command_key = input_dict.keys()[0]
 
   if command_key.endswith('publickey') or command_key.endswith('privatekey'):
-    print 'Warning: Trying to load a keypair named "'+command_key+'.publickey" and "'+command_key+'.privatekey"'
+    print 'Warning: Trying to load a keypair named',
+    print '"' + command_key + '.publickey" and "' + command_key + '.privatekey"'
 
 
   # the user input may have a directory or tilde in it.   The key name 
   # shouldn't have either.
   fileandpath = os.path.expanduser(command_key)
   keyname = os.path.basename(fileandpath)
-  privkeyfn = fileandpath+'.privatekey'
-  pubkeyfn = fileandpath+'.publickey'
+  privkeyfn = fileandpath + '.privatekey'
+  pubkeyfn = fileandpath + '.publickey'
 
 
 
 
   # load the keys and update the table...
   try:
-    privkey = rsa_file_to_privatekey(privkeyfn)
+    privkey = rsa.rsa_file_to_privatekey(privkeyfn)
   except (OSError, IOError), e:
-    raise seash_exceptions.UserError("Cannot locate private key '"+privkeyfn+"'.\nDetailed error: '"+str(e)+"'.")
+    raise seash_exceptions.UserError("Cannot locate private key '" + 
+        privkeyfn + "'.\nDetailed error: '" + str(e) + "'.")
 
   try:
-    pubkey = rsa_file_to_publickey(pubkeyfn)
+    pubkey = rsa.rsa_file_to_publickey(pubkeyfn)
   except (OSError, IOError), e:
-    raise seash_exceptions.UserError("Cannot locate private key '"+privkeyfn+"'.\nDetailed error: '"+str(e)+"'.")
+    raise seash_exceptions.UserError("Cannot locate private key '" + 
+        privkeyfn + "'.\nDetailed error: '" + str(e) + "'.")
 
-  seash_global_variables.keys[keyname] = {'privatekey':privkey, 'publickey':pubkey}
+  seash_global_variables.keys[keyname] = {'privatekey': privkey, 
+      'publickey': pubkey}
 
 
   # Check the keys, on error reverse the change and re-raise
@@ -1586,16 +1579,19 @@ def loadkeys_keyname_as(input_dict, environment_dict):
 
   # load the keys and update the table...
   try:
-    privkey = rsa_file_to_privatekey(privkeyfn)
+    privkey = rsa.rsa_file_to_privatekey(privkeyfn)
   except (OSError, IOError), e:
-    raise seash_exceptions.UserError("Cannot locate private key '"+privkeyfn+"'.\nDetailed error: '"+str(e)+"'.")
+    raise seash_exceptions.UserError("Cannot locate private key '" + 
+        privkeyfn + "'.\nDetailed error: '" + str(e) + "'.")
 
   try:
-    pubkey = rsa_file_to_publickey(pubkeyfn)
+    pubkey = rsa.rsa_file_to_publickey(pubkeyfn)
   except (OSError, IOError), e:
-    raise seash_exceptions.UserError("Cannot locate private key '"+privkeyfn+"'.\nDetailed error: '"+str(e)+"'.")
+    raise seash_exceptions.UserError("Cannot locate public key '" + 
+        pubkeyfn + "'.\nDetailed error: '" + str(e) + "'.")
 
-  seash_global_variables.keys[keyname] = {'privatekey':privkey, 'publickey':pubkey}
+  seash_global_variables.keys[keyname] = {'privatekey': privkey, 
+      'publickey': pubkey}
 
 
   # Check the keys, on error reverse the change and re-raise
@@ -1783,10 +1779,10 @@ def loadstate_filename(input_dict, environment_dict):
 
   try:
     # decrypt states
-    statestr = rsa_decrypt(cypher, seash_global_variables.keys[environment_dict['currentkeyname']]['privatekey'])
+    statestr = rsa.rsa_decrypt(cypher, seash_global_variables.keys[environment_dict['currentkeyname']]['privatekey'])
 
     # deserialize
-    state = serialize_deserializedata(statestr)
+    state = serialize.serialize_deserializedata(statestr)
   except Exception, error:
     error_msg = "Unable to correctly parse state file. Your private "
     error_msg += "key may be incorrect."
@@ -2733,7 +2729,7 @@ def set_users_arg(input_dict, environment_dict):
     if not seash_global_variables.keys[identity]['publickey']:
       raise seash_exceptions.UserError("No public key for '"+identity+"'")
 
-    userkeys.append(rsa_publickey_to_string(seash_global_variables.keys[identity]['publickey']))
+    userkeys.append(rsa.rsa_publickey_to_string(seash_global_variables.keys[identity]['publickey']))
   # this is the format the NM expects...
   userkeystring = '|'.join(userkeys)
 
