@@ -30,7 +30,7 @@ to help distinguish one from the other.
 # through seash, so let's re-insert here so that we cover as much ground
 # as possible..
 originaltype = type
-import repyportability
+#import repyportability # XXX Why is this needed?
 import abc
 import warnings
 abc.type = originaltype
