@@ -280,7 +280,7 @@ exampleuser@browsegood !>
     'cmdgroup':None, 'help_text':"""
 A target can be either a host:port:vesselname, %ID, or a group name.
 
-See https://seattle.cs.washington.edu/wiki/RepyTutorial for more info!""",
+See https://seattle.poly.edu/wiki/RepyTutorial for more info!""",
     'children':{}},
   'show':{
     'name':'show', 'callback':command_callbacks.show,

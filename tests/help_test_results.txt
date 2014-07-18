@@ -1,7 +1,7 @@
 
 A target can be either a host:port:vesselname, %ID, or a group name.
 
-See https://seattle.cs.washington.edu/wiki/RepyTutorial for more info!
+See https://seattle.poly.edu/wiki/RepyTutorial for more info!
 
 add [target] [to group]      -- Adds a target (a vessel name or group) to a 
                                 group
@@ -34,7 +34,7 @@ For more commands, try:
 
 A target can be either a host:port:vesselname, %ID, or a group name.
 
-See https://seattle.cs.washington.edu/wiki/RepyTutorial for more info!
+See https://seattle.poly.edu/wiki/RepyTutorial for more info!
 
 contact host:port[:vessel]     -- Communicate with a node explicitly
 genkeys fn [len] [as identity] -- Creates new pub / priv keys (default 
