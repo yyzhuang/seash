@@ -25,8 +25,6 @@ import errno
 # Enable the use of Affixes
 affix_stack = dy_import_module('affix_stack.r2py')
 affix_obj = affix_stack.AffixStack('(CoordinationAffix)(NamingAndResolverAffix)')
-#affix_obj = affix_stack.AffixStack('(NamingAndResolverAffix)')
-print affix_obj.get_advertisement_string()
 
 # Override openconnection so that nmclient will use Affixes
 openconnection = affix_obj.openconnection
@@ -143,7 +141,7 @@ def savestate(statefn, handleinfo, host, port, expnum, filename, cmdargs,
 
   # serialize states and encrypt
   if seash_global_variables.keys.has_key(defaultkeyname):
-    cypher = rsa.rsa_encrypt(serialize_serializedata(state), seash_global_variables.keys[currentkeyname]['publickey'])
+    cypher = rsa.rsa_encrypt(serialize.serialize_serializedata(state), seash_global_variables.keys[currentkeyname]['publickey'])
   else:
     raise seash_exceptions.UserError("The keyname '" + defaultkeyname + "' is not loaded.")
 
