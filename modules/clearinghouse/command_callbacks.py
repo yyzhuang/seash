@@ -24,7 +24,7 @@ from repyportability import *
 add_dy_support(locals())
 
 rsa = dy_import_module('rsa.r2py')
-nmclient = dy_import_module("nmclient.r2py")
+nmclient = seash_helper.nmclient
 
 is_printed_m2crypto_not_installed = False
 
@@ -294,7 +294,7 @@ def _get_clearinghouse_vessel_handle(vesselhandle):
   finally:
     nmclient.nmclient_destroyhandle(nodehandle)
 
-  nodekeystr = rsa_publickey_to_string(vesseldict['nodekey'])
+  nodekeystr = rsa.rsa_publickey_to_string(vesseldict['nodekey'])
   return (True, nodekeystr+':'+vesselname)
 
 
@@ -302,7 +302,7 @@ def _connect_to_clearinghouse(identity, allow_ssl_insecure):
   try:
     return seattleclearinghouse_xmlrpc.SeattleClearinghouseClient(
       username=identity,
-      private_key_string=rsa_privatekey_to_string(
+      private_key_string=rsa.rsa_privatekey_to_string(
         seash_global_variables.keys[identity]['privatekey']),
       allow_ssl_insecure=allow_ssl_insecure)
 
