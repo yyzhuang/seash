@@ -63,6 +63,9 @@ import seash_modules
 import os.path
 import sys
 
+# For reverse DNS lookups (of IP address to names)
+import socket
+
 # XXX Importing repyportability and dy_import_module's more than 
 # XXX once in an import chain overwrites the Repy API calls and 
 # XXX disables any overrides (e.g. Affix's). We thus use 
@@ -71,6 +74,8 @@ import sys
 time = seash_helper.dy_import_module("time.r2py")
 rsa = seash_helper.dy_import_module("rsa.r2py")
 listops = seash_helper.dy_import_module("listops.r2py")
+
+nmclient = seash_helper.nmclient
 
 # For lookups from Seattle's advertise services
 advertise = seash_helper.dy_import_module("advertise.r2py")
@@ -957,8 +962,8 @@ def contact(input_dict, environment_dict):
 
 
   # get information about the node's vessels
-  thishandle = nmclient_createhandle(environment_dict['host'], environment_dict['port'], privatekey = seash_global_variables.keys[environment_dict['currentkeyname']]['privatekey'], publickey = seash_global_variables.keys[environment_dict['currentkeyname']]['publickey'], vesselid = vesselname, timeout = seash_global_variables.globalseashtimeout)
-  ownervessels, uservessels = nmclient_listaccessiblevessels(thishandle,seash_global_variables.keys[environment_dict['currentkeyname']]['publickey'])
+  thishandle = nmclient.nmclient_createhandle(environment_dict['host'], environment_dict['port'], privatekey = seash_global_variables.keys[environment_dict['currentkeyname']]['privatekey'], publickey = seash_global_variables.keys[environment_dict['currentkeyname']]['publickey'], vesselid = vesselname, timeout = seash_global_variables.globalseashtimeout)
+  ownervessels, uservessels = nmclient.nmclient_listaccessiblevessels(thishandle,seash_global_variables.keys[environment_dict['currentkeyname']]['publickey'])
 
   newidlist = []
   # determine if we control the specified vessel...
@@ -982,10 +987,10 @@ def contact(input_dict, environment_dict):
         # set the vesselname
         # NOTE: we leak handles (no cleanup of thishandle).   
         # I think we don't care...
-        newhandle = nmclient_duplicatehandle(thishandle)
-        environment_dict['handleinfo'] = nmclient_get_handle_info(newhandle)
+        newhandle = nmclient.nmclient_duplicatehandle(thishandle)
+        environment_dict['handleinfo'] = nmclient.nmclient_get_handle_info(newhandle)
         environment_dict['handleinfo']['vesselname'] = vesselname
-        nmclient_set_handle_info(newhandle, environment_dict['handleinfo'])
+        nmclient.nmclient_set_handle_info(newhandle, environment_dict['handleinfo'])
 
         id = seash_helper.add_vessel(longname,environment_dict['currentkeyname'],newhandle)
         newidlist.append('%'+str(id)+"("+longname+")")
@@ -999,10 +1004,10 @@ def contact(input_dict, environment_dict):
         # set the vesselname
         # NOTE: we leak handles (no cleanup of thishandle).   
         # I think we don't care...
-        newhandle = nmclient_duplicatehandle(thishandle)
-        environment_dict['handleinfo'] = nmclient_get_handle_info(newhandle)
+        newhandle = nmclient.nmclient_duplicatehandle(thishandle)
+        environment_dict['handleinfo'] = nmclient.nmclient_get_handle_info(newhandle)
         environment_dict['handleinfo']['vesselname'] = vesselname
-        nmclient_set_handle_info(newhandle, environment_dict['handleinfo'])
+        nmclient.nmclient_set_handle_info(newhandle, environment_dict['handleinfo'])
 
         id = seash_helper.add_vessel(longname,environment_dict['currentkeyname'],newhandle)
         newidlist.append('%'+str(id)+"("+longname+")")
@@ -2777,9 +2782,9 @@ def set_timeout_arg(input_dict, environment_dict):
   # let's reset the timeout for existing handles...
   for longname in seash_global_variables.vesselinfo:
     thisvesselhandle = seash_global_variables.vesselinfo[longname]['handle']
-    thisvesselhandledict = nmclient_get_handle_info(thisvesselhandle)
+    thisvesselhandledict = nmclient.nmclient_get_handle_info(thisvesselhandle)
     thisvesselhandledict['timeout'] = seash_global_variables.globalseashtimeout
-    nmclient_set_handle_info(thisvesselhandle,thisvesselhandledict)
+    nmclient.nmclient_set_handle_info(thisvesselhandle,thisvesselhandledict)
 
 
           
