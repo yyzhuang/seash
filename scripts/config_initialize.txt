@@ -1,0 +1,5 @@
+https://github.com/SeattleTestbed/seattlelib_v2 dependencies/seattlelib_v2
+https://github.com/SeattleTestbed/portability dependencies/portability
+https://github.com/SeattleTestbed/repy_v2 dependencies/repy_v2
+https://github.com/aaaaalbert/affix -b minimal-clean-alpha-release dependencies/affix
+https://github.com/SeattleTestbed/common
