@@ -1,7 +1,7 @@
 repy_v2/*
 portability/*
 seattlelib_v2/*
-seash/*
+../*
 affix/*
 affix/components/*
 common/utf/*
