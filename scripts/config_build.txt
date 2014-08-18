@@ -1,13 +1,10 @@
-dependencies/repy_v2/*
-dependencies/portability/*
-dependencies/seattlelib_v2/*
-../*
-dependencies/affix/*
-dependencies/affix/components/*
+repy_v2/*
+portability/*
+seattlelib_v2/*
+seash/*
+affix/*
+affix/components/*
 common/utf/*
 common/*
 # Tests
-test dependencies/repy_v2/testsV2/*
-test dependencies/portability/tests/*
-test dependencies/seattlelib_v2/tests/*
 test ../tests/*
