@@ -57,9 +57,6 @@ warnings.simplefilter("default")
 # Needed for parsing user commands and executing command functions
 import seash_dictionary
 
-### Integration fix here...
-from repyportability import *
-
 # We need to expose the readline object file to OSX because the default object
 # file for Python 2.7 on OSX is not compatible with our tab completion module.
 import os
@@ -107,11 +104,6 @@ import seash_modules
 import seash_exceptions
 
 import seash_helper
-
-from repyportability import *
-add_dy_support(locals())
-
-dy_import_module_symbols("time.r2py")
 
 import traceback
 
@@ -175,13 +167,15 @@ def command_loop(test_command_list):
           # State is saved in file "autosave_username", so that user knows which
           # RSA private key to use to reload the state.
           autosavefn = "autosave_" + str(environment_dict['defaultkeyname'])
-          seash_helper.savestate(autosavefn, environment_dict['handleinfo'], environment_dict['host'], 
-                                 environment_dict['port'], environment_dict['expnum'], 
-                                 environment_dict['filename'], environment_dict['cmdargs'], 
-                                 environment_dict['defaulttarget'], environment_dict['defaultkeyname'], 
-                                 environment_dict['autosave'], environment_dict['defaultkeyname'])
+          seash_helper.savestate(autosavefn, 
+              environment_dict['handleinfo'], environment_dict['host'], 
+              environment_dict['port'], environment_dict['expnum'], 
+              environment_dict['filename'], environment_dict['cmdargs'], 
+              environment_dict['defaulttarget'], environment_dict['defaultkeyname'], 
+              environment_dict['autosave'], environment_dict['defaultkeyname'])
         except Exception, error:
-          raise seash_exceptions.UserError("There is an error in autosave: '" + str(error) + "'. You can turn off autosave using the command 'set autosave off'.")
+          raise seash_exceptions.UserError("There is an error in autosave: '" + 
+              str(error) + "'. You can turn off autosave using the command 'set autosave off'.")
 
       # Returns the dictionary of dictionaries that correspond to the
       # command string
