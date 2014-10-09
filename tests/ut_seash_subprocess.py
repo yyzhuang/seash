@@ -14,17 +14,6 @@ initproc.wait()
 
 nmproc = subprocess.Popen([sys.executable, "nmmain.py", "--test-mode"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
-# Make sure the nodemanager (or its parent Python interpreter) doesn't 
-# print anything on stderr before we continue. Otherwise, the test 
-# nodemanager probably didn't start, and subsequent unit tests will 
-# surely hang/fail. See SeattleTestbed/seash#80.
-
-output, error = nmproc.communicate()
-
-if error is not "":
-  raise Exception("Error starting nodemanager in test mode: '" +
-      error + "'")
-
 # without closing stdin, stdout, stderr, nmmain.py won't execute on XP
 nmproc.stdin.close()
 nmproc.stdout.close()
