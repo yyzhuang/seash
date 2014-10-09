@@ -8,4 +8,5 @@ DEPENDENCIES/common/*
 
 # Tests
 test DEPENDENCIES/common/utf/*
+test DEPENDENCIES/nodemanager/*
 test tests/*
