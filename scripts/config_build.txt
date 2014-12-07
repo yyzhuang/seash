@@ -7,6 +7,6 @@ DEPENDENCIES/affix/components/*
 DEPENDENCIES/common/*
 
 # Tests
-test DEPENDENCIES/common/utf/*
+test DEPENDENCIES/utf/*
 test DEPENDENCIES/nodemanager/*
 test tests/*
