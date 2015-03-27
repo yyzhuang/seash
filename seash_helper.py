@@ -753,7 +753,7 @@ def setusers_target(longname, userkeystring):
   try:
     nmclient.nmclient_signedsay(seash_global_variables.vesselinfo[longname]['handle'], "ChangeUsers", vesselname, userkeystring)
 
-  except NMClientException, e:
+  except nmclient.NMClientException, e:
     return (False, str(e))
 
   else:
@@ -820,7 +820,7 @@ def reload_target(longname, handleinfo):
         privatekey = priKey, publickey = pubKey, 
         timeout=seash_global_variables.globalseashtimeout)
 
-  except NMClientException, error:
+  except nmclient.NMClientException, error:
     return (False, str(error))
 
 
