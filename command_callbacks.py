@@ -1343,7 +1343,11 @@ def loadpub_filename(input_dict, environment_dict):
     pubkeyfn = fileandpath+'.publickey'
 
   # load the key and update the table...
-  pubkey = rsa.rsa_file_to_publickey(pubkeyfn)
+  try:
+    pubkey = rsa.rsa_file_to_publickey(pubkeyfn)
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading public key from file '" +
+        pubkeyfn + "': " + repr(e))
 
   if keyname not in seash_global_variables.keys:
     seash_global_variables.keys[keyname] = {'publickey': pubkey, 
@@ -1392,7 +1396,12 @@ def loadpub_filename_as(input_dict, environment_dict):
   keyname = command_key
 
   # load the key and update the table...
-  pubkey = rsa.rsa_file_to_publickey(pubkeyfn)
+  try:
+    pubkey = rsa.rsa_file_to_publickey(pubkeyfn)
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading public key from file '" +
+        pubkeyfn + "': " + repr(e))
+
   if keyname not in seash_global_variables.keys:
     seash_global_variables.keys[keyname] = {'publickey':pubkey, 'privatekey':None}
   else:
@@ -1434,7 +1443,12 @@ def loadpriv_filename(input_dict, environment_dict):
 
 
   # load the key and update the table...
-  privkey = rsa.rsa_file_to_privatekey(privkeyfn)
+  try:
+    privkey = rsa.rsa_file_to_privatekey(privkeyfn)
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading private key from file '" +
+        privkeyfn + "': " + repr(e))
+
   if keyname not in seash_global_variables.keys:
     seash_global_variables.keys[keyname] = {'privatekey': privkey, 
         'publickey': None}
@@ -1482,7 +1496,12 @@ def loadpriv_filename_as(input_dict, environment_dict):
 
 
   # load the key and update the table...
-  privkey = rsa.rsa_file_to_privatekey(privkeyfn)
+  try:
+    privkey = rsa.rsa_file_to_privatekey(privkeyfn)
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading private key from file '" +
+        privkeyfn + "': " + repr(e))
+
   if keyname not in seash_global_variables.keys:
     seash_global_variables.keys[keyname] = {'privatekey': privkey, 
         'publickey': None}
@@ -1527,15 +1546,15 @@ def loadkeys_keyname(input_dict, environment_dict):
   # load the keys and update the table...
   try:
     privkey = rsa.rsa_file_to_privatekey(privkeyfn)
-  except (OSError, IOError), e:
-    raise seash_exceptions.UserError("Cannot locate private key '" + 
-        privkeyfn + "'.\nDetailed error: '" + str(e) + "'.")
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading private key from file '" +
+        privkeyfn + "': " + repr(e))
 
   try:
     pubkey = rsa.rsa_file_to_publickey(pubkeyfn)
-  except (OSError, IOError), e:
-    raise seash_exceptions.UserError("Cannot locate private key '" + 
-        privkeyfn + "'.\nDetailed error: '" + str(e) + "'.")
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading public key from file '" +
+        pubkeyfn + "': " + repr(e))
 
   seash_global_variables.keys[keyname] = {'privatekey': privkey, 
       'publickey': pubkey}
@@ -1585,15 +1604,15 @@ def loadkeys_keyname_as(input_dict, environment_dict):
   # load the keys and update the table...
   try:
     privkey = rsa.rsa_file_to_privatekey(privkeyfn)
-  except (OSError, IOError), e:
-    raise seash_exceptions.UserError("Cannot locate private key '" + 
-        privkeyfn + "'.\nDetailed error: '" + str(e) + "'.")
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading private key from file '" +
+        privkeyfn + "': " + repr(e))
 
   try:
     pubkey = rsa.rsa_file_to_publickey(pubkeyfn)
-  except (OSError, IOError), e:
-    raise seash_exceptions.UserError("Cannot locate public key '" + 
-        pubkeyfn + "'.\nDetailed error: '" + str(e) + "'.")
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading public key from file '" +
+        pubkeyfn + "': " + repr(e))
 
   seash_global_variables.keys[keyname] = {'privatekey': privkey, 
       'publickey': pubkey}
@@ -1778,7 +1797,13 @@ def loadstate_filename(input_dict, environment_dict):
     raise seash_exceptions.UserError("Specify the key name by first typing 'as [username]'.")
 
   # reading encrypted serialized states from file
-  state_obj = open(fileandpath, 'r')
+  try:
+    state_obj = open(fileandpath, 'r')
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading file '" + fileandpath + 
+        "': " + repr(e))
+    
+
   cypher = state_obj.read()
   state_obj.close()
 
@@ -1862,7 +1887,12 @@ def upload_filename(input_dict, environment_dict):
 
 
   # read the local file...
-  fileobj = open(localfn,"r")
+  try:
+    fileobj = open(localfn, "r")
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading file '" + localfn + 
+        "': " + repr(e))
+
   filedata = fileobj.read()
   fileobj.close()
 
@@ -1927,7 +1957,12 @@ def upload_filename_remotefn(input_dict, environment_dict):
 
 
   # read the local file...
-  fileobj = open(localfn,"r")
+  try:
+    fileobj = open(localfn, "r")
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading file '" + localfn + 
+        "': " + repr(e))
+
   filedata = fileobj.read()
   fileobj.close()
 
@@ -2331,7 +2366,12 @@ def run_localfn(input_dict, environment_dict):
     onlyfilename)
 
   # read the local file...
-  fileobj = open(fileandpath,"r")
+  try:
+    fileobj = open(fileandpath, "r")
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading file '" + fileandpath + 
+        "': " + repr(e))
+
   filedata = fileobj.read()
   fileobj.close()
 
@@ -2406,7 +2446,12 @@ def run_localfn_arg(input_dict, environment_dict):
     onlyfilename)
 
   # read the local file...
-  fileobj = open(fileandpath,"r")
+  try:
+    fileobj = open(fileandpath, "r")
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading file '" + localfn + 
+        "': " + repr(e))
+
   filedata = fileobj.read()
   fileobj.close()
 
@@ -2463,7 +2508,12 @@ def split_resourcefn(input_dict, environment_dict):
   if not environment_dict['currenttarget']:
     raise seash_exceptions.UserError("Must specify a target")
 
-  resourcefo = open(resourcefn)
+  try:
+    resourcefo = open(resourcefn)
+  except (FileNotFoundError, OSError, IOError), e:
+    raise seash_exceptions.UserError("Error reading file '" + resourcefn + 
+        "': " + repr(e))
+
   resourcedata = resourcefo.read()
   resourcefo.close() 
 
