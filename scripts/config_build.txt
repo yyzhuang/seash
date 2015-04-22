@@ -19,5 +19,4 @@ DEPENDENCIES/common/*
 test DEPENDENCIES/utf/*
 test DEPENDENCIES/nodemanager/*
 test tests/*
-test tests/test/* test
-test tests/test/test_subdir test/test_subdir
+
