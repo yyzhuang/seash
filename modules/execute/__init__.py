@@ -54,23 +54,25 @@ your_user_name@browsegood !>
   # Construct an input_dict containing command args for seash's 
   # `upload FILENAME` function.
   # XXX There might be a cleaner way to do this.
-  faked_input_dict = {"execute": 
-                      {"name": "start", 'callback': None, 
-                       "children": {
-                         "dylink.r2py": {"name": "filename", 
-                                         'callback':command_callbacks.start_remotefn, 
-                                         'children': {
-                                           "encasementlib.r2py": {"name": "filename", 
-                                                                  'callback':command_callbacks.start_remotefn, 
-                                                                  'children': {
-                                                                    "sensor_layer.r2py": {"name": "filename", 
-                                                                                          'callback':command_callbacks.start_remotefn, 
-                                                                                          'children': {}
-                                                                                          }}}}}}}}
+  faked_input_dict = {"execute": {"name": "start", "callback": None, 
+                       "children": {"dylink.r2py": {"name": "filename", "callback":command_callbacks.start_remotefn, 
+                                      "children": {"encasementlib.r2py sensor_layer.r2py": {"name": "filename", 
+                                                     "callback":command_callbacks.start_remotefn_arg, "children": {}
+                                                     }}}}}}
     
   command_callbacks.start_remotefn(faked_input_dict, environment_dict)
 
 
+{'start': {'callback': None,
+  'children': {'a': {'callback': <function start_remotefn at 0x103b45500>,
+    'children': {'b c d e f g': {'callback': <function start_remotefn_arg at 0x103b45578>,
+        'children': {},
+        'help_text': '',
+        'name': 'args'}},
+    'help_text': '',
+    'name': 'filename'}
+    },
+(...)
 
 
 command_dict = {
