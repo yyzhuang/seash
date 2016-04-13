@@ -63,18 +63,6 @@ your_user_name@browsegood !>
   command_callbacks.start_remotefn(faked_input_dict, environment_dict)
 
 
-{'start': {'callback': None,
-  'children': {'a': {'callback': <function start_remotefn at 0x103b45500>,
-    'children': {'b c d e f g': {'callback': <function start_remotefn_arg at 0x103b45578>,
-        'children': {},
-        'help_text': '',
-        'name': 'args'}},
-    'help_text': '',
-    'name': 'filename'}
-    },
-(...)
-
-
 command_dict = {
   "execute": {
     "name": "execute",
