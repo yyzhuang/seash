@@ -54,7 +54,7 @@ your_user_name@browsegood !>
   # Construct an input_dict containing command args for seash's 
   # `upload FILENAME` function.
   # XXX There might be a cleaner way to do this.
-  faked_input_dict = {"start": {"name": "filename", "callback": None, 
+  faked_input_dict = {"start": {"name": "start", "callback": None, 
                        "children": {"dylink.r2py": {"name": "filename", "callback":command_callbacks.start_remotefn, 
                                       "children": {"encasementlib.r2py sensor_layer.r2py": {"name": "args", 
                                                      "callback":command_callbacks.start_remotefn_arg, "children": {}
