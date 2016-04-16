@@ -1,6 +1,7 @@
 import seash_exceptions
 import command_callbacks
 import os
+import pprint
 
 module_help = """
 Execute Module
@@ -31,10 +32,15 @@ def simplify_command(input_dict, environment_dict):
   the `"[ARGUMENT]"` sub-key of `children` renamed to what 
   argument the user provided. 
   """
+
+  print "In simplify_command, input_dict is ",
+  pprint.pprint(input_dict)
+  print
+
   # Check user input and seash state:
   # 1, Make sure there is an active user key.
   if environment_dict["currentkeyname"] is None:
-    raise seash_exceptions.UserError("""Error: Please set an identity before using 'uploaddir'!
+    raise seash_exceptions.UserError("""Error: Please set an identity!
 Example:
 
  !> loadkeys your_user_name
@@ -44,19 +50,21 @@ your_user_name@ !>
 
   # 2, Make sure there is a target to work on.
   if environment_dict["currenttarget"] is None:
-    raise seash_exceptions.UserError("""Error: Please set a target to work on before using 'uploaddir'!
+    raise seash_exceptions.UserError("""Error: Please set a target to work on!
 Example
 your_user_name@ !> on browsegood
 your_user_name@browsegood !> 
 """)
 
+  # currently support one experiment (no args): bad design!
+  experiment = input_dict['execute']['children'].keys()[0]  
 
   # Construct an input_dict containing command args for seash's 
   # `upload FILENAME` function.
   # XXX There might be a cleaner way to do this.
   faked_input_dict = {"start": {"name": "start", "callback": None, 
                        "children": {"dylink.r2py": {"name": "filename", "callback":command_callbacks.start_remotefn, 
-                                      "children": {"encasementlib.r2py sensor_layer.r2py": {"name": "args", 
+                                      "children": {"encasementlib.r2py sensor_layer.r2py " + experiment: {"name": "args", 
                                                      "callback":command_callbacks.start_remotefn_arg, "children": {}
                                                      }}}}}}
     
