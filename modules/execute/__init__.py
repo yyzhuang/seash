@@ -33,9 +33,9 @@ def simplify_command(input_dict, environment_dict):
   argument the user provided. 
   """
 
-  print "In simplify_command, input_dict is ",
-  pprint.pprint(input_dict)
-  print
+  #print "In simplify_command, input_dict is ",
+  #pprint.pprint(input_dict)
+  #print
 
   # Check user input and seash state:
   # 1, Make sure there is an active user key.
