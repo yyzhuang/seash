@@ -56,8 +56,8 @@ your_user_name@ !> on browsegood
 your_user_name@browsegood !> 
 """)
 
-  # currently support one experiment (no args): bad design!
-  experiment = input_dict['execute']['children'].keys()[0]  
+  # currently support one experiment with a (unlimited) number of args
+  experiment = input_dict['execute']['children'].keys()[0] 
 
   # Construct an input_dict containing command args for seash's 
   # `upload FILENAME` function.
@@ -67,7 +67,7 @@ your_user_name@browsegood !>
                                       "children": {"encasementlib.r2py sensor_layer.r2py " + experiment: {"name": "args", 
                                                      "callback":command_callbacks.start_remotefn_arg, "children": {}
                                                      }}}}}}
-    
+  
   command_callbacks.start_remotefn_arg(faked_input_dict, environment_dict)
 
 
